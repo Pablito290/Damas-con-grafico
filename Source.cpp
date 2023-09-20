@@ -21,7 +21,7 @@ public:
 
     void Select(RenderWindow& ventana, int x, int y) {
         RectangleShape casilla;
-        casilla.setSize(Vector2f(67.5f, 67.5f)); // Ajustar el tama駉 para un mapa de 540x540
+        casilla.setSize(Vector2f(67.5f, 67.5f)); // Ajustar el tama帽o para un mapa de 540x540
         //casilla.setFillColor(Color::Magenta);
         Texture cur;
         cur.loadFromFile("texturas/cursor.png");
@@ -104,7 +104,7 @@ void muertas(RenderWindow& ventana, int rdead, int ndead) {
         for (int i = 0; i < rdead; i++) {
             ventana.draw(moridosB);
             y -= 40; // Puedes usar el operador de incremento para simplificar esto
-            moridosB.setPosition(20, y); // Establece la posici髇 en cada iteraci髇
+            moridosB.setPosition(20, y); // Establece la posici贸n en cada iteraci贸n
         }
     }
     RectangleShape moridosN({ 40,40 }); // Establece el radio directamente en el constructor
@@ -116,7 +116,7 @@ void muertas(RenderWindow& ventana, int rdead, int ndead) {
         for (int i = 0; i < ndead; i++) {
             ventana.draw(moridosN);
             x -= 40; // Puedes usar el operador de incremento para simplificar esto
-            moridosN.setPosition(700, x); // Establece la posici髇 en cada iteraci髇
+            moridosN.setPosition(700, x); // Establece la posici贸n en cada iteraci贸n
         }
     }
 }
@@ -639,7 +639,8 @@ int main()
     std::cin >> nivel;
     ContextSettings settings;
     settings.antialiasingLevel = 16.0;
-    RenderWindow ventana(VideoMode(800, 600), "Checkers", Style::Default, settings);
+    RenderWindow ventana(VideoMode(800, 600), "Checkers");
+    ventana.setFramerateLimit(30);
 
     Event event;
     Tablero tablero;
