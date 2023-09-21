@@ -246,38 +246,6 @@ public:
             enlaces[x] = 0;
         }
     }
-    void print()
-    {
-        std::cout << "Las fichas rojas son: ";
-        for (int x = 0; x < 12; x++)
-        {
-            if (_Rojas[x].isAlive == 0)
-            {
-                std::cout << _Rojas[x].x << _Rojas[x].y << " vive:" << _Rojas[x].isAlive << "--";
-            }
-            else
-            {
-                std::cout << _Rojas[x].x << _Rojas[x].y << "--";
-            }
-
-        }
-        std::cout << std::endl;
-
-        std::cout << "Las fichas negras son: ";
-        for (int x = 0; x < 12; x++)
-        {
-            if (_Negras[x].isAlive == 0)
-            {
-                std::cout << _Negras[x].x << _Negras[x].y << " vive:" << _Negras[x].isAlive << "--";
-            }
-            else
-            {
-                std::cout << _Negras[x].x << _Negras[x].y << "--";
-            }
-        }
-        std::cout << std::endl;
-
-    }
 };
 
 struct Arbol
@@ -305,7 +273,19 @@ struct Arbol
         _nivel = nivel;
     }
 
+    ~Arbol() {
+        // Llama a una función de limpieza recursiva para liberar la memoria de los nodos del árbol
+        LimpiarArbol(_root);
+    }
 
+    void LimpiarArbol(Node* nodo) {
+        if (nodo) {
+            for (int i = 0; i < 48; i++) {
+                LimpiarArbol(nodo->enlaces[i]);
+            }
+            delete nodo;
+        }
+    }
     int funcion(Node* Actual)
     {
         int rojas_vivas = 0;
@@ -321,6 +301,9 @@ struct Arbol
                     rojas_vivas += 10;
                 }
             }
+            else {
+                rojas_vivas--;
+            }
             if (Actual->_Negras[x].isAlive)
             {
                 negras_vivas++;
@@ -329,43 +312,15 @@ struct Arbol
                     negras_vivas += 10;
                 }
             }
+            else {
+                negras_vivas--;
+            }
+
         }
 
         return negras_vivas - rojas_vivas;
     }
 
-    void print()
-    {
-        std::cout << "Las fichas rojas son: ";
-        for (int x = 0; x < 12; x++)
-        {
-            if (_root->_Rojas[x].isAlive == 0)
-            {
-                std::cout << _root->_Rojas[x].x << _root->_Rojas[x].y << " vive:" << _root->_Rojas[x].isAlive << "--";
-            }
-            else
-            {
-                std::cout << _root->_Rojas[x].x << _root->_Rojas[x].y << "--";
-            }
-
-        }
-        std::cout << std::endl;
-
-        std::cout << "Las fichas negras son: ";
-        for (int x = 0; x < 12; x++)
-        {
-            if (_root->_Negras[x].isAlive == 0)
-            {
-                std::cout << _root->_Negras[x].x << _root->_Negras[x].y << " vive:" << _root->_Negras[x].isAlive << "--";
-            }
-            else
-            {
-                std::cout << _root->_Negras[x].x << _root->_Negras[x].y << "--";
-            }
-        }
-        std::cout << std::endl;
-
-    }
     void simular_movimiento(int nivel, Node* Actual)
     {
         Dama aux_rojas[12];
@@ -375,19 +330,14 @@ struct Arbol
             aux_rojas[x] = Actual->_Rojas[x];
             aux_negro[x] = Actual->_Negras[x];
         }
-        //std::cout << "nivel: " << nivel<<std::endl;;
-        //print();
         Dama* SelectedPiece;
         int turno = 0;
         int turno_ini = 0;
         int posx = 0;
         int posy = 0;
         int i = 0;
-        //SelectedPiece=Find(0, 5, _root->_Rojas, _root->_Negras);
-        //Move(1, 4, SelectedPiece, _root->_Rojas, _root->_Negras, &turno);
         if (nivel == _nivel)
         {
-            //std::cout << "se retorna " << std::endl;
             return;
         }
         for (int x = 0; x < 12; x++)
@@ -420,8 +370,6 @@ struct Arbol
                             {
                                 cambios++;
                                 nivel++;
-                                //std::cout << "Nivel antes del cambio: " << nivel << std::endl;
-                                //std::cout << "cambio nro " << cambios << " cambio desde: " << posx << " " << posy << " hasta " << posx + movimientos_x_n[y] << " " << posy + movimientos_y_n[y] << " en el turno " << turno_ini << std::endl;
                                 Actual->enlaces[i] = new Node(Actual->_tablero, Actual->_Rojas, Actual->_Negras);
                                 simular_movimiento(nivel, Actual->enlaces[i]);
                                 i++;
@@ -439,8 +387,6 @@ struct Arbol
                             {
                                 cambios++;
                                 nivel++;
-                                //std::cout << "Nivel antes del cambio: " << nivel << std::endl;
-                                //std::cout << "cambio nro " << cambios << " cambio desde: " << posx << " " << posy << " hasta " << posx + movimientos_x_r[y] << " " << posy + movimientos_y_r[y] << " en el turno " << turno_ini << std::endl;
                                 Actual->enlaces[i] = new Node(Actual->_tablero, Actual->_Rojas, Actual->_Negras);
                                 simular_movimiento(nivel, Actual->enlaces[i]);
                                 i++;
@@ -641,7 +587,6 @@ int main()
     settings.antialiasingLevel = 16.0;
     RenderWindow ventana(VideoMode(800, 600), "Checkers");
     ventana.setFramerateLimit(30);
-
     Event event;
     Tablero tablero;
     Dama Rojas[12];
@@ -768,6 +713,7 @@ int main()
             turno = 1;
 
             // Liberar la memoria utilizando delete
+            //Minmax->~Arbol();
             delete Minmax;
 
         }
